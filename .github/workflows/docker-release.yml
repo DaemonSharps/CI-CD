@@ -32,5 +32,8 @@ jobs:
           key: ${{ inputs.SSH_PRIVATE_KEY }}
           known_hosts: ${{ inputs.SSH_HOST }}
       
+      - name: Create docker context
+        run: docker context create vps-remote --docker "host=ssh://root@${{ inputs.SSH_HOST }}"
+      
 
   
