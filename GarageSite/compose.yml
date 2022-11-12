@@ -1,0 +1,26 @@
+name: garage-site
+services:
+  iwt-db:
+    image: postgres:${JWT_DB_TAG}
+    container_name: iwt-auth-db
+    ports:
+      - "5432:5432"
+    env_file: 
+    - ./JWTProvider/db.env
+    networks:
+      - jwt-auth
+
+  jwt-auth: 
+    image: daemonsharps/jwt-auth-api:${JWT_TAG}
+    container_name: jwt-auth-api
+    ports: 
+      - "3000:80"
+    depends_on:
+      - iwt-db
+    env_file: 
+    - ./JWTProvider/api.env
+    networks:
+      - jwt-auth
+
+networks:
+  jwt-auth: {}
