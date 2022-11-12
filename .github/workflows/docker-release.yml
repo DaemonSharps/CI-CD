@@ -4,11 +4,17 @@ on:
   workflow_dispatch:
   workflow_call:
     inputs:
-    secrets:
       SSH_PRIVATE_KEY:
         required: true
+        type: string
       SSH_HOST:
         required: true
+        type: string
+    #secrets:
+     # SSH_PRIVATE_KEY:
+      #  required: false
+      #SSH_HOST:
+      #  required: false
 
 jobs:
   docker-release:
@@ -24,8 +30,8 @@ jobs:
 
       - uses: kielabokkie/ssh-key-and-known-hosts-action@v1
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          ssh-host: ${{ secrets.SSH_HOST }}
+          ssh-private-key: ${{ inputs.SSH_PRIVATE_KEY }}
+          ssh-host: ${{ inputs.SSH_HOST }}
       
       - name: Update docker-compose
         run: sudo pip install docker-compose
