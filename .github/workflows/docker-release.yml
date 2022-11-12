@@ -35,5 +35,14 @@ jobs:
       - name: Create docker context
         run: docker context create vps-remote --docker "host=ssh://root@${{ inputs.SSH_HOST }}"
       
+      - name: Use new context
+        run: docker context use vps-remote
+
+      - name: Check docker context
+        run: docker context ls
+
+      - name: Show containers
+        run: docker ps
+      
 
   
