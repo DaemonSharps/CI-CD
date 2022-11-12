@@ -1,0 +1,34 @@
+name: Deploy docker-compose
+
+on:
+  workflow_dispatch:
+  workflow-call:
+    inputs:
+    secrets:
+      SSH_PRIVATE_KEY:
+        required: true
+      SSH_HOST:
+        required: true
+
+jobs:
+  docker-release:
+    name: Развертывание приложения
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' 
+
+      - uses: kielabokkie/ssh-key-and-known-hosts-action@v1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-host: ${{ secrets.SSH_HOST }}
+      
+      - name: Update docker-compose
+        run: sudo pip install docker-compose
+      
+
+  
