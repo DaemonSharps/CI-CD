@@ -5,9 +5,11 @@ on:
   workflow_call:
     inputs:
       SSH_PRIVATE_KEY:
+        description: "PK"
         required: true
         type: string
       SSH_HOST:
+        description: "host"
         required: true
         type: string
     #secrets:
