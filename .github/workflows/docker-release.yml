@@ -2,7 +2,7 @@ name: Deploy docker-compose
 
 on:
   workflow_dispatch:
-  workflow-call:
+  workflow_call:
     inputs:
     secrets:
       SSH_PRIVATE_KEY:
