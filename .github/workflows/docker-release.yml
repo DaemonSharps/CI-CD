@@ -54,7 +54,7 @@ on:
         type: string
         required: true
       environment_name:
-        type: environment
+        type: string
         required: true
     secrets:
       SSH_PRIVATE_KEY:
