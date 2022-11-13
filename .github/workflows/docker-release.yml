@@ -31,6 +31,7 @@ jobs:
         with:
           key: ${{ inputs.SSH_PRIVATE_KEY }}
           known_hosts: "mock-value"
+          name: id_ed25519
 
       - name: Adding Known Hosts
         run: ssh-keyscan -H ${{ inputs.SSH_HOST }} >> ~/.ssh/known_hosts
