@@ -108,7 +108,7 @@ jobs:
           export ${{ inputs.image_tag_env }}
           export ${{ inputs.image_port_env }}
           docker compose pull
-          docker compose up -p ${{ inputs.environment_name }} -d --no-deps --force-recreate ${{ inputs.compose_service_name }}
+          docker compose -p ${{ inputs.environment_name }} up -d --no-deps --force-recreate ${{ inputs.compose_service_name }}
 
       - name: Show containers
         run: |
