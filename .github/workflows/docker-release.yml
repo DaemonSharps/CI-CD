@@ -20,6 +20,18 @@ on:
         description: "Переменная окружения для тега версии образа *_TAG={значение}"
         type: string
         required: true
+      image_port_env:
+        description: "Переменная окружения для порта образа *_PORT={значение}"
+        type: number
+        required: true
+      environment_name:
+        description: "Название стенда"
+        required: true
+        default: 'development'
+        type: choice
+        options:
+        - development
+        - production
 
   workflow_call:
     inputs:
@@ -37,6 +49,12 @@ on:
         required: true
       image_tag_env:
         type: string
+        required: true
+      image_port_env:
+        type: string
+        required: true
+      environment_name:
+        type: environment
         required: true
     secrets:
       SSH_PRIVATE_KEY:
@@ -88,8 +106,9 @@ jobs:
         run: |
           cd ${{ inputs.compose_folder }}
           export ${{ inputs.image_tag_env }}
+          export ${{ inputs.image_port_env }}
           docker compose pull
-          docker compose up -d --no-deps --force-recreate ${{ inputs.compose_service_name }}
+          docker compose up -p ${{ inputs.environment_name }} -d --no-deps --force-recreate ${{ inputs.compose_service_name }}
 
       - name: Show containers
         run: |
