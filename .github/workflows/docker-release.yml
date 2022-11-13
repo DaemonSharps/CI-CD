@@ -83,12 +83,14 @@ jobs:
           cd ${{ inputs.compose_folder }}
           docker compose ps
           docker ps
+          
       - name: Context soft stop and restart
         run: |
           cd ${{ inputs.compose_folder }}
           export ${{ inputs.image_tag_env }}
           docker compose pull
           docker compose up -d --no-deps --force-recreate ${{ inputs.compose_service_name }}
+
       - name: Show containers
         run: |
           cd ${{ inputs.compose_folder }}
