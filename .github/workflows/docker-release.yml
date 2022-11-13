@@ -30,8 +30,11 @@ jobs:
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ inputs.SSH_PRIVATE_KEY }}
-          known_hosts: ${{ inputs.SSH_HOST }}
-      
+          known_hosts: "mock-value"
+
+      - name: Adding Known Hosts
+        run: ssh-keyscan -H ${{ inputs.SSH_HOST }} >> ~/.ssh/known_hosts
+
       - name: Create docker context
         run: docker context create vps-remote --docker "host=ssh://root@${{ inputs.SSH_HOST }}"
       
