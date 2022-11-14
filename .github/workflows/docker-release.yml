@@ -88,6 +88,12 @@ jobs:
       - name: Adding Known Hosts
         run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
+      - name: Create docker context
+        run: docker context create vps-remote --docker "host=ssh://${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}"
+      
+      - name: Use new context
+        run: docker context use vps-remote
+
       - name: Docker cleanup
         run: |
           echo Delete unnecessary containers
@@ -98,12 +104,6 @@ jobs:
 
           echo Delete unnecessary networks
           docker network prune -f
-
-      - name: Create docker context
-        run: docker context create vps-remote --docker "host=ssh://${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}"
-      
-      - name: Use new context
-        run: docker context use vps-remote
 
       - name: Create ${{ inputs.env_file_name }}
         run: |
