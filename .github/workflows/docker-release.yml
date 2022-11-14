@@ -12,10 +12,6 @@ on:
         description: "Путь к файлу *.env нужного образа"
         type: string
         required: true
-      env_file_text:
-        description: "Наполнение *.env файла"
-        type: string
-        required: true
       compose_service_name:
         description: "Имя сервиса, который собираемся обновить"
         type: string
@@ -46,9 +42,6 @@ on:
       env_file_name:
         type: string
         required: true
-      env_file_text:
-        type: string
-        required: true
       compose_service_name:
         type: string
         required: true
@@ -67,6 +60,9 @@ on:
       SSH_HOST:
         required: true
       SSH_USER:
+        required: true
+      # base64 encoded
+      ENV_TEXT:
         required: true
 
 jobs:
@@ -108,7 +104,9 @@ jobs:
       - name: Create ${{ inputs.env_file_name }}
         run: |
           cd ${{ inputs.compose_folder }}
-          echo ${{ inputs.env_file_text }} > ${{ inputs.env_file_name }}
+          echo $ENV_TEXT | base64 -d > ${{ inputs.env_file_name }}
+        env:
+          ENV_TEXT: ${{ secrets.ENV_TEXT }}
 
       - name: Show containers
         run: |
