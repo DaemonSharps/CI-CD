@@ -31,11 +31,12 @@ on:
       environment_name:
         description: "Название стенда"
         required: true
-        default: 'development'
+        default: 'workflow_test'
         type: choice
         options:
         - development
         - production
+        - workflow_test
 
   workflow_call:
     inputs:
@@ -122,6 +123,10 @@ jobs:
           export ${{ inputs.image_port_env }}
           docker compose pull
           docker compose -p garage-site-${{ inputs.environment_name }} up -d --no-deps --force-recreate ${{ inputs.compose_service_name }}
+      
+      - name: Stop if testing
+        if: inputs.environment_name == "workflow_test"
+        run: docker compose -p garage-site-${{ inputs.environment_name }} stop
 
       - name: Show containers
         run: |
