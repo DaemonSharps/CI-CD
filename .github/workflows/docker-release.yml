@@ -121,7 +121,7 @@ jobs:
           cd ${{ inputs.compose_folder }}
           export ${{ inputs.image_tag_env }}
           export ${{ inputs.image_port_env }}
-          docker compose pull
+          docker compose -p garage-site-${{ inputs.environment_name }} pull ${{ inputs.compose_service_name }}
           docker compose -p garage-site-${{ inputs.environment_name }} up -d --no-deps --force-recreate ${{ inputs.compose_service_name }}
       
       - name: Stop if testing
