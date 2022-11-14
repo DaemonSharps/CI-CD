@@ -110,7 +110,7 @@ jobs:
       - name: Show containers
         run: |
           cd ${{ inputs.compose_folder }}
-          docker compose ps
+          docker compose ls
           docker ps
           
       - name: Context soft stop and restart
@@ -128,5 +128,5 @@ jobs:
       - name: Show containers
         run: |
           cd ${{ inputs.compose_folder }}
-          docker compose ps
+          docker compose ls
           docker ps
