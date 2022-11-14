@@ -110,8 +110,7 @@ jobs:
       - name: Show containers
         run: |
           cd ${{ inputs.compose_folder }}
-          docker compose ls
-          docker ps
+          docker compose -p garage-site-${{ inputs.environment_name }} ps
           
       - name: Context soft stop and restart
         run: |
@@ -128,5 +127,4 @@ jobs:
       - name: Show containers
         run: |
           cd ${{ inputs.compose_folder }}
-          docker compose ls
-          docker ps
+          docker compose -p garage-site-${{ inputs.environment_name }} ps
