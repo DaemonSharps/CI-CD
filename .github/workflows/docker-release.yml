@@ -125,7 +125,7 @@ jobs:
           docker compose -p garage-site-${{ inputs.environment_name }} up -d --no-deps --force-recreate ${{ inputs.compose_service_name }}
       
       - name: Stop if testing
-        if: inputs.environment_name == "workflow_test"
+        if: inputs.environment_name == 'workflow_test'
         run: docker compose -p garage-site-${{ inputs.environment_name }} stop
 
       - name: Show containers
