@@ -61,6 +61,7 @@ on:
         required: true
       SSH_USER:
         required: true
+      # base64 encoded
       ENV_TEXT:
         required: true
 
@@ -103,7 +104,7 @@ jobs:
       - name: Create ${{ inputs.env_file_name }}
         run: |
           cd ${{ inputs.compose_folder }}
-          echo $ENV_TEXT > ${{ inputs.env_file_name }}
+          echo $ENV_TEXT | base64 -d > ${{ inputs.env_file_name }}
         env:
           ENV_TEXT: ${{ secrets.ENV_TEXT }}
 
