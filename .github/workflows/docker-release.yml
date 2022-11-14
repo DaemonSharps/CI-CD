@@ -67,7 +67,6 @@ on:
 
 jobs:
   docker-release:
-    name: Развертывание образа докера в compose
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment_name }}
     steps:
