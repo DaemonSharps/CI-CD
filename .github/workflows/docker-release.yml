@@ -68,14 +68,17 @@ jobs:
   docker-release:
     name: Развертывание образа докера в compose
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment_name }}
     steps:
 
       - uses: actions/checkout@v3
-
+        with:
+          repository: DaemonSharps/CI-CD
+          
       - name: Install SSH key
         uses: webfactory/ssh-agent@v0.6.0
         with:
-          ssh-private-key: ${{ secrets.SSH_KEY }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Adding Known Hosts
         run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
@@ -105,7 +108,7 @@ jobs:
           export ${{ inputs.image_tag_env }}
           export ${{ inputs.image_port_env }}
           docker compose pull
-          docker compose -p ${{ inputs.environment_name }} up -d --no-deps --force-recreate ${{ inputs.compose_service_name }}
+          docker compose -p garage-site-${{ inputs.environment_name }} up -d --no-deps --force-recreate ${{ inputs.compose_service_name }}
 
       - name: Show containers
         run: |
