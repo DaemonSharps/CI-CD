@@ -129,7 +129,8 @@ jobs:
         run: |
           cd ${{ inputs.compose_folder }}
           source ${{ inputs.env_file_name }}
-          export DUMP_COMAND="docker compose -p ${{ inputs.project_name }}-${{ inputs.environment_name }} exec -T ${{ inputs.compose_service_name }} pg_dump -c $POSTGRES_DB > `date "+%Y%m%d_%H%M%S_%s"`-dump.sql"
+          export PROJECT_NAME="${{ inputs.project_name }}-${{ inputs.environment_name }}"
+          export DUMP_COMAND="docker compose -p $PROJECT_NAME exec -T ${{ inputs.compose_service_name }} pg_dump -c $POSTGRES_DB > projects/$PROJECT_NAME/${{ inputs.compose_service_name }}/`date "+%Y%m%d_%H%M%S_%s"`-dump.sql"
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} $DUMP_COMAND
 
       - name: Show containers
