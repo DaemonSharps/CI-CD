@@ -33,6 +33,10 @@ on:
         - development
         - production
         - workflow_test
+      project_name:
+        description: "Название проекта"
+        type: string
+        required: true
 
   workflow_call:
     inputs:
@@ -49,6 +53,9 @@ on:
         type: string
         required: true
       image_port_env:
+        type: string
+        required: true
+      project_name:
         type: string
         required: true
       environment_name:
@@ -113,21 +120,21 @@ jobs:
       - name: Show containers
         run: |
           cd ${{ inputs.compose_folder }}
-          docker compose -p garage-site-${{ inputs.environment_name }} ps
+          docker compose -p ${{ inputs.project_name }}-${{ inputs.environment_name }} ps
           
       - name: Context soft stop and restart
         run: |
           cd ${{ inputs.compose_folder }}
           export ${{ inputs.image_tag_env }}
           export ${{ inputs.image_port_env }}
-          docker compose -p garage-site-${{ inputs.environment_name }} pull ${{ inputs.compose_service_name }}
-          docker compose -p garage-site-${{ inputs.environment_name }} up -d --no-deps --force-recreate ${{ inputs.compose_service_name }}
+          docker compose -p ${{ inputs.project_name }}-${{ inputs.environment_name }} pull ${{ inputs.compose_service_name }}
+          docker compose -p ${{ inputs.project_name }}-${{ inputs.environment_name }} up -d --no-deps --force-recreate ${{ inputs.compose_service_name }}
       
       - name: Stop if testing
         if: inputs.environment_name == 'workflow_test'
-        run: docker compose -p garage-site-${{ inputs.environment_name }} stop
+        run: docker compose -p ${{ inputs.project_name }}-${{ inputs.environment_name }} stop
 
       - name: Show containers
         run: |
           cd ${{ inputs.compose_folder }}
-          docker compose -p garage-site-${{ inputs.environment_name }} ps
+          docker compose -p ${{ inputs.project_name }}-${{ inputs.environment_name }} ps
