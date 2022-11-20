@@ -59,10 +59,10 @@ on:
       image_port_env:
         type: string
         required: true
-      project_name:
+      environment_name:
         type: string
         required: true
-      environment_name:
+      project_name:
         type: string
         required: true
       create_db_dump:
