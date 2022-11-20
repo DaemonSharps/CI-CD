@@ -37,6 +37,10 @@ on:
         description: "Название проекта"
         type: string
         required: true
+      create_db_dump:
+        description: "Нужно ли делать бекап БД"
+        type: boolean
+        required: true
 
   workflow_call:
     inputs:
@@ -60,6 +64,9 @@ on:
         required: true
       environment_name:
         type: string
+        required: true
+      create_db_dump:
+        type: boolean
         required: true
     secrets:
       SSH_PRIVATE_KEY:
@@ -116,6 +123,14 @@ jobs:
           echo $ENV_TEXT | base64 -d > ${{ inputs.env_file_name }}
         env:
           ENV_TEXT: ${{ secrets.ENV_TEXT }}
+
+      - name: Dump DB
+        if: inputs.create_db_dump
+        run: |
+          cd ${{ inputs.compose_folder }}
+          source ${{ inputs.env_file_name }}
+          export DUMP_COMAND="docker compose -p ${{ inputs.project_name }}-${{ inputs.environment_name }} exec -T ${{ inputs.compose_service_name }} pg_dump -c $POSTGRES_DB > `date "+%Y%m%d_%H%M%S_%s"`-dump.sql"
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} $DUMP_COMAND
 
       - name: Show containers
         run: |
