@@ -1,0 +1,86 @@
+name: Create postgres dump
+
+on:
+  workflow_dispatch:
+    inputs:
+      compose_folder:
+        description: "Путь к директории с целевым compose.yml"
+        type: string
+        required: true
+      env_file_name:
+        description: "Путь к файлу *.env нужного образа"
+        type: string
+        required: true
+      environment_name:
+        description: "Название стенда"
+        type: choice
+        required: true
+        default: 'workflow_test'
+        options:
+        - development
+        - production
+        - workflow_test
+      project_name:
+        description: "Название проекта"
+        type: string
+        required: true
+      compose_service_name:
+        description: "Имя сервиса, который собираемся обновить"
+        type: string
+        required: true
+  workflow_call:
+    inputs:
+      compose_folder:
+        type: string
+        required: true
+      env_file_name:
+        type: string
+        required: true
+      environment_name:
+        type: string
+        required: true
+      project_name:
+        type: string
+        required: true
+      compose_service_name:
+        type: string
+        required: true
+    secrets:
+      SSH_PRIVATE_KEY:
+        required: true 
+      SSH_HOST:
+        required: true
+      SSH_USER:
+        required: true
+    
+
+jobs:
+  dump_postgres:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: DaemonSharps/CI-CD
+
+      - name: Install SSH key
+        uses: webfactory/ssh-agent@v0.6.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Adding Known Hosts
+        run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+      
+      - name: Dump postgres
+        run: |
+          cd ${{ inputs.compose_folder }}
+          source ${{ inputs.env_file_name }}
+          export PROJECT_NAME="${{ inputs.project_name }}-${{ inputs.environment_name }}"
+          export DOCKER_COMAND="docker compose -p $PROJECT_NAME exec -T ${{ inputs.compose_service_name }}"
+          export DUMP_FOLDER_PATH="projects/$PROJECT_NAME/${{ inputs.compose_service_name }}"
+          export DUMP_COMAND="$DOCKER_COMAND pg_dump -c $POSTGRES_DB > $DUMP_FOLDER_PATH/`date "+%Y%m%d_%H%M%S_%s"`-dump.sql"
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} mkdir -p $DUMP_FOLDER_PATH
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} $DUMP_COMAND
+
+      
+      
+      
