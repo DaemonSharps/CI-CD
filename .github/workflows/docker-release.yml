@@ -22,13 +22,13 @@ on:
         required: true
       image_port_env:
         description: "Переменная окружения для порта образа *_PORT={значение}"
-        type: number
+        type: string
         required: true
       environment_name:
         description: "Название стенда"
+        type: choice
         required: true
         default: 'workflow_test'
-        type: choice
         options:
         - development
         - production
@@ -36,10 +36,6 @@ on:
       project_name:
         description: "Название проекта"
         type: string
-        required: true
-      create_db_dump:
-        description: "Нужно ли делать бекап БД"
-        type: boolean
         required: true
 
   workflow_call:
@@ -64,9 +60,6 @@ on:
         required: true
       project_name:
         type: string
-        required: true
-      create_db_dump:
-        type: boolean
         required: true
     secrets:
       SSH_PRIVATE_KEY:
@@ -123,16 +116,6 @@ jobs:
           echo $ENV_TEXT | base64 -d > ${{ inputs.env_file_name }}
         env:
           ENV_TEXT: ${{ secrets.ENV_TEXT }}
-
-      - name: Dump DB
-        if: inputs.create_db_dump
-        run: |
-          cd ${{ inputs.compose_folder }}
-          source ${{ inputs.env_file_name }}
-          export PROJECT_NAME="${{ inputs.project_name }}-${{ inputs.environment_name }}"
-          export DUMP_COMAND="docker compose -p $PROJECT_NAME exec -T ${{ inputs.compose_service_name }} pg_dump -c $POSTGRES_DB > projects/$PROJECT_NAME/${{ inputs.compose_service_name }}/`date "+%Y%m%d_%H%M%S_%s"`-dump.sql"
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} mkdir -p projects/$PROJECT_NAME/${{ inputs.compose_service_name }}
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} $DUMP_COMAND
 
       - name: Show containers
         run: |
