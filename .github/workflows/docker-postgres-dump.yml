@@ -52,7 +52,9 @@ on:
         required: true
       SSH_USER:
         required: true
-    
+      # base64 encoded
+      ENV_TEXT:
+        required: true
 
 jobs:
   dump_postgres:
@@ -69,7 +71,14 @@ jobs:
 
       - name: Adding Known Hosts
         run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
-      
+
+      - name: Create ${{ inputs.env_file_name }}
+        run: |
+          cd ${{ inputs.compose_folder }}
+          echo $ENV_TEXT | base64 -d > ${{ inputs.env_file_name }}
+        env:
+          ENV_TEXT: ${{ secrets.ENV_TEXT }}
+          
       - name: Dump postgres
         run: |
           cd ${{ inputs.compose_folder }}
