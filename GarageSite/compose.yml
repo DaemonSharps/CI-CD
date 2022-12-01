@@ -9,7 +9,7 @@ services:
       - jwt-auth
 
   jwt-api: 
-    image: daemonsharps/jwt-auth-api:${JWT_TAG}
+    image: daemonsharps/jwt-auth-api:${JWT_API_TAG}
     ports: 
       - "${JWT_API_PORT}:80"
     depends_on:
@@ -19,5 +19,28 @@ services:
     networks:
       - jwt-auth
 
+  garage-db:
+    image: postgres:${GARAGE_DB_TAG}
+    ports:
+      - "${GARAGE_DB_PORT}:5432"
+    env_file: 
+    - ./GarageApi/db.env
+    networks:
+      - garage-backend
+
+  garage-api:
+    image: daemonsharps/garage-api:${GARAGE_API_TAG}
+    ports:
+      - "${GARAGE_API_PORT}:80"
+    depends_on:
+      - garage-db
+    env_file:
+      - ./GarageApi/api.env
+    networks:
+      - garage-backend
+      - jwt-auth
+
+
 networks:
   jwt-auth: {}
+  garage-backend: {}
