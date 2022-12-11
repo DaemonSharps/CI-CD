@@ -5,6 +5,8 @@ services:
       - "${JWT_DB_PORT}:5432"
     env_file: 
     - ./JWTProvider/db.env
+    volumes:
+      - auth-data:/var/lib/postgresql/data/
     networks:
       - jwt-auth
 
@@ -25,6 +27,8 @@ services:
       - "${GARAGE_DB_PORT}:5432"
     env_file: 
     - ./GarageApi/db.env
+    volumes:
+      - users-data:/var/lib/postgresql/data/
     networks:
       - garage-backend
 
@@ -38,8 +42,10 @@ services:
       - ./GarageApi/api.env
     networks:
       - garage-backend
-      - jwt-auth
 
+volumes:
+  users-data:
+  auth-data:
 
 networks:
   jwt-auth: {}
