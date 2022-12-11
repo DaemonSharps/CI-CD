@@ -5,26 +5,34 @@ services:
       - "${JWT_DB_PORT}:5432"
     env_file: 
     - ./JWTProvider/db.env
+    volumes:
+      - auth-data:/var/lib/postgresql/data/
     networks:
-      - jwt-auth
+      - jwt-backend
 
   jwt-api: 
     image: daemonsharps/jwt-auth-api:${JWT_API_TAG}
     ports: 
       - "${JWT_API_PORT}:80"
     depends_on:
+      - garage-db
       - jwt-db
     env_file: 
-    - ./JWTProvider/api.env
+      - ./JWTProvider/api.env
     networks:
-      - jwt-auth
+      - jwt-backend
+      - api
 
   garage-db:
     image: postgres:${GARAGE_DB_TAG}
     ports:
       - "${GARAGE_DB_PORT}:5432"
     env_file: 
-    - ./GarageApi/db.env
+      - ./GarageApi/db.env
+    depends_on:
+      - jwt-db
+    volumes:
+      - users-data:/var/lib/postgresql/data/
     networks:
       - garage-backend
 
@@ -34,13 +42,18 @@ services:
       - "${GARAGE_API_PORT}:80"
     depends_on:
       - garage-db
+      - jwt-db
     env_file:
       - ./GarageApi/api.env
     networks:
       - garage-backend
-      - jwt-auth
+      - api
 
+volumes:
+  users-data:
+  auth-data:
 
 networks:
-  jwt-auth: {}
+  jwt-backend: {}
   garage-backend: {}
+  api: {}
