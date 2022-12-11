@@ -8,7 +8,7 @@ services:
     volumes:
       - auth-data:/var/lib/postgresql/data/
     networks:
-      - jwt-auth
+      - jwt-backend
 
   jwt-api: 
     image: daemonsharps/jwt-auth-api:${JWT_API_TAG}
@@ -18,9 +18,10 @@ services:
       - garage-db
       - jwt-db
     env_file: 
-    - ./JWTProvider/api.env
+      - ./JWTProvider/api.env
     networks:
-      - jwt-auth
+      - jwt-backend
+      - api
 
   garage-db:
     image: postgres:${GARAGE_DB_TAG}
@@ -46,11 +47,13 @@ services:
       - ./GarageApi/api.env
     networks:
       - garage-backend
+      - api
 
 volumes:
   users-data:
   auth-data:
 
 networks:
-  jwt-auth: {}
+  jwt-backend: {}
   garage-backend: {}
+  api: {}
