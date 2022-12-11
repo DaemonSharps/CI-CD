@@ -15,6 +15,7 @@ services:
     ports: 
       - "${JWT_API_PORT}:80"
     depends_on:
+      - garage-db
       - jwt-db
     env_file: 
     - ./JWTProvider/api.env
@@ -26,7 +27,9 @@ services:
     ports:
       - "${GARAGE_DB_PORT}:5432"
     env_file: 
-    - ./GarageApi/db.env
+      - ./GarageApi/db.env
+    depends_on:
+      - jwt-db
     volumes:
       - users-data:/var/lib/postgresql/data/
     networks:
@@ -38,6 +41,7 @@ services:
       - "${GARAGE_API_PORT}:80"
     depends_on:
       - garage-db
+      - jwt-db
     env_file:
       - ./GarageApi/api.env
     networks:
